@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Access Shared Document</h2>
+<form action="/documents/access/" method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="access_key" class="form-label">Access Key</label>
+        <input type="text" class="form-control" id="access_key" name="access_key" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Access Document</button>
+</form>
+{% endblock %}

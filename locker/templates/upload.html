@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Upload a Document</h2>
+<form action="/upload/" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}    
+    <div class="mb-3">
+        <label for="title" class="form-label">Document Title</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    <div class="mb-3">
+        <label for="file" class="form-label">Choose File</label>
+        <input type="file" class="form-control" id="file" name="file" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+{% endblock %}

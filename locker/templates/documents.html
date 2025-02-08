@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>My Documents</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Uploaded</th>
+            <th>Verified</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for document in documents %}
+        <tr>
+            <td>{{ document.title }}</td>
+            <td>{{ document.uploaded_at }}</td>
+            <td>{{ document.verified|yesno:"Yes,No" }}</td>
+            <td>
+                <a href="{% url 'view-document' document.id %}" target="_blank" class="btn btn-primary btn-sm">View</a>
+                {% if not document.verified %}
+                <a href="{% url 'verify-document' document.id %}" class="btn btn-success btn-sm">Verify</a>
+                {% endif %}
+                <button 
+                    class="btn btn-info btn-sm share-btn" 
+                    data-id="{{ document.id }}" 
+                    data-url="{% url 'view-document' document.id %}">
+                    Share
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Modal for QR Code -->
+<div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrCodeModalLabel">Share Document</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">    
+                <div id="qrCodeContainer" class="mb-3" style="margin-left:7.5rem;border: solid rgb(14, 14, 14) 2px;margin-right: 9rem;"></div>
+                <p id="shareLink" class="text-break"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src ="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+    document.querySelectorAll('.share-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const url = this.getAttribute('data-url');
+            const modal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
+            const qrCodeContainer = document.getElementById('qrCodeContainer');
+            const shareLink = document.getElementById('shareLink');
+            
+            qrCodeContainer.innerHTML = '';
+            const qr = new QRCode(qrCodeContainer,{
+                text: window.location.origin + url, 
+                width: 200,
+                height: 200,
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            shareLink.innerHTML = `<strong>Link:</strong> <a href="${window.location.origin + url}" target="_blank">${window.location.origin + url}</a>`;
+
+            modal.show();
+        });
+    });
+</script>
+{% endblock %}
